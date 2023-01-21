@@ -2,7 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 
-const { routerMovies } = require('./src/routes/api/movies');
+const { routerMovies } = require('./routes/api/movies');
 
 const app = express();
 
@@ -26,13 +26,17 @@ app.use((err, req, res, next) => {
             message: err.message
         })
     }
+    if (err.message.includes("Cast to ObjectId failed for value")) {
+        console.log(2)
+        return res.status(400).json({
+            message: "id is invalid"
+        });
+    }
     console.log("API Error:", err.message)
 
     res.status(500).json({message: "Internal server error"})
 })
 
-const PORT = 8081
-
-app.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`)
-})
+module.exports = {
+    app
+}
