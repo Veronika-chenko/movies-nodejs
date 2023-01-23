@@ -1,23 +1,23 @@
 const express = require('express');
-const routerMovies = express.Router();
+const moviesRouter = express.Router();
 
 const { tryCatchWrapper } = require('../../helpers/errorHandler');
 const { validateMovie, updateStatusValidation } = require('../middlewares/movieMiddleware');
 
 const {
-    getMoviesController,
-    getMovieByIdController,
-    addMovieController,
-    deleteMovieController,
-    updateMovieStatusController
+    getMovies,
+    getMovieById,
+    addMovie,
+    deleteMovie,
+    updateMovieStatus
 } = require('../../controllers/moviesControllers');
 
-routerMovies.get('/', tryCatchWrapper(getMoviesController));
-routerMovies.get('/:id', tryCatchWrapper(getMovieByIdController));
-routerMovies.post('/', validateMovie, tryCatchWrapper(addMovieController));
-routerMovies.delete('/:id', tryCatchWrapper(deleteMovieController));
-routerMovies.patch('/:id/favorite', updateStatusValidation, tryCatchWrapper(updateMovieStatusController));
+moviesRouter.get('/', tryCatchWrapper(getMovies));
+moviesRouter.get('/:id', tryCatchWrapper(getMovieById));
+moviesRouter.post('/', validateMovie, tryCatchWrapper(addMovie));
+moviesRouter.delete('/:id', tryCatchWrapper(deleteMovie));
+moviesRouter.patch('/:id/favorite', updateStatusValidation, tryCatchWrapper(updateMovieStatus));
 
 module.exports = {
-    routerMovies,
-};
+    moviesRouter
+}
