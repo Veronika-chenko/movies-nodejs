@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
+
 const { app } = require('./src/app');
 mongoose.set("strictQuery", false);
 

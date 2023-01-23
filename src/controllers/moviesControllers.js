@@ -1,57 +1,62 @@
+const { Movie } = require('../models/movie');
 const { HttpError } = require('../helpers/errorHandler');
 
-const {
-    getMovies,
-    getMovieById,
-    addMovie,
-    removeMovie,
-    updateStatus,
-} = require("../services");
+async function getMovies(req, res) {
+    const { page, limit = 5} = req.query;
+    const skip = (page - 1) * limit;
 
-async function getMoviesController(req, res) {
-    const { limit } = req.query;
-    const movies = await getMovies({limit})
-    res.json(movies)
+    const movies = await Movie.find({}).skip(skip).limit(limit); 
+    res.json(movies);
 }
 
-async function getMovieByIdController(req, res, next) {
+async function getMovieById(req, res, next) {
     const { id } = req.params; 
-    const movie = await getMovieById(id);
+    const movie = await Movie.findById(id);
     if (!movie) {
-        return next(HttpError(404, "Movie not found"))
+        return next(HttpError(404, "Movie not found"));
     }
-    res.json(movie)
+    res.json(movie);
 }
 
-async function addMovieController (req, res) {
-    const { title } = req.body;
-    const newMovie = await addMovie(title)
-    res.status(201).json(newMovie)
+async function addMovie (req, res) {
+    const { title, favorite } = req.body;
+    const newMovie = await Movie.create({
+        title,
+        favorite,
+    });
+
+    res.status(201).json(newMovie);
 }
 
-async function deleteMovieController (req, res, next) {
+async function deleteMovie (req, res, next) {
     const { id } = req.params;
-    const movie = await getMovieById(id);
+    const movie = await Movie.findById(id);
     if (!movie) {
-        return next(HttpError(404, "Movie not found"))
+        return next(HttpError(404, "Movie not found"));
     }
-    await removeMovie(id)
+    await Movie.findByIdAndRemove(id);
 
-    res.status(204).json({})
+    res.status(204).json({});
 }
-async function updateMovieStatusController(req, res) {
+
+async function updateMovieStatus(req, res) {
     const { id } = req.params;
-    const movie = await updateStatus(id, req.body)
+    const movie = await Movie.findByIdAndUpdate(
+        id,
+        req.body,
+        { new: true }
+    );
     if (!movie) {
-        return res.status(404).json({"message": "Contact not found"})
+        return res.status(404).json({ "message": "Contact not found" });
     }
-    res.json(movie)
+
+    res.json(movie);
 }
 
 module.exports = {
-    getMoviesController,
-    getMovieByIdController,
-    addMovieController,
-    deleteMovieController,
-    updateMovieStatusController
+    getMovies,
+    getMovieById,
+    addMovie,
+    deleteMovie,
+    updateMovieStatus
 }
