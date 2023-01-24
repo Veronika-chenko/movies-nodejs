@@ -1,5 +1,6 @@
 const fs = require('fs/promises');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid')
 const { Movie } = require('../models/movie');
 const { HttpError } = require('../helpers/errorHandler');
 
@@ -56,9 +57,12 @@ async function updateMovieStatus(req, res) {
 }
 
 async function uploadImage(req, res) {
-    const { filename } = req.file;
-    const tmpPath = path.resolve(__dirname, '../../tmp', filename);
-    const publicPath = path.resolve(__dirname, '../../public', filename);
+    const { originalname } = req.file;
+    const [extention] = originalname.split('.').reverse();
+    const newName = `${uuidv4()}.${extention}`;
+    const tmpPath = path.resolve(__dirname, '../../tmp', originalname);
+    const publicPath = path.resolve(__dirname, '../../public', newName);
+    
     try {
         await fs.rename(tmpPath, publicPath);
     } catch (error) {
@@ -68,7 +72,7 @@ async function uploadImage(req, res) {
 
     const movieId = req.params.id;
 
-    const imagePath = `/public/${filename}`;
+    const imagePath = `/public/${newName}`;
     const movie = await Movie.findByIdAndUpdate(movieId, {
         image: imagePath,
     }, { new: true });

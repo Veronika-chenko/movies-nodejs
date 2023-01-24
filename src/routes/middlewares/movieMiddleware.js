@@ -1,5 +1,4 @@
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
 const { JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
@@ -62,7 +61,7 @@ const storage = multer.diskStorage({
         cb(null, path.resolve(__dirname, "../../../", "tmp"))
     },
     filename: function (req, file, cb) {
-        cb(null, uuidv4() + file.originalname)
+        cb(null, file.originalname)
     }
 })
 
