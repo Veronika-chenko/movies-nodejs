@@ -1,3 +1,5 @@
+const fs = require('fs/promises');
+const path = require('path');
 const { Movie } = require('../models/movie');
 const { HttpError } = require('../helpers/errorHandler');
 
@@ -53,10 +55,36 @@ async function updateMovieStatus(req, res) {
     res.json(movie);
 }
 
+async function uploadImage(req, res) {
+    const { filename } = req.file;
+    const tmpPath = path.resolve(__dirname, '../../tmp', filename);
+    const publicPath = path.resolve(__dirname, '../../public', filename);
+    try {
+        await fs.rename(tmpPath, publicPath);
+    } catch (error) {
+        await fs.unlink(tmpPath);
+        throw error;
+    }
+
+    const movieId = req.params.id;
+
+    const imagePath = `/public/${filename}`;
+    const movie = await Movie.findByIdAndUpdate(movieId, {
+        image: imagePath,
+    }, { new: true });
+    
+    return res.json({
+        data: {
+            image: movie.image,
+        },
+    });
+}
+
 module.exports = {
     getMovies,
     getMovieById,
     addMovie,
     deleteMovie,
-    updateMovieStatus
+    updateMovieStatus,
+    uploadImage
 }

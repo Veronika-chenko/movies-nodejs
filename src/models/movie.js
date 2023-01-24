@@ -11,6 +11,10 @@ const movieSchema = mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        image: {
+            type: String,
+            default: "",
+        }
     },
     {
         versionKey: false,
