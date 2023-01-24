@@ -1,16 +1,16 @@
-const { HttpError } = require("../helpers/errorHandler");
-const { User } = require("../models/user");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
+const { HttpError } = require("../helpers/errorHandler");
+const { User } = require("../models/user");
 
 async function registerController(req, res, next) {
     const { email, password } = req.body;
-    const salt = await bcrypt.genSalt()
-    const hashPassword = await bcrypt.hash(password, salt)
+
     try {
         const savedUser = await User.create({
-            email, password: hashPassword
+            email,
+            password,
         });
         
         console.log("register: ", email, password)
