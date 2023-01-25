@@ -58,6 +58,7 @@ async function updateMovieStatus(req, res) {
 
 async function uploadImage(req, res) {
     const { originalname } = req.file;
+    
     const [extention] = originalname.split('.').reverse();
     const newName = `${uuidv4()}.${extention}`;
     const tmpPath = path.resolve(__dirname, '../../tmp', originalname);
@@ -83,6 +84,7 @@ async function uploadImage(req, res) {
         },
     });
 }
+
 
 module.exports = {
     getMovies,

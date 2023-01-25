@@ -38,7 +38,7 @@ async function loginController(req, res, next) {
     })
 
     if (!storedUser) {
-        throw new HttpError(401, "emailis not valid")
+        throw new HttpError(401, "email is not valid")
     }
 
     const isPasswordValid = await bcrypt.compare(password, storedUser.password)
